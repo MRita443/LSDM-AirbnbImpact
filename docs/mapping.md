@@ -1,6 +1,6 @@
 
 ## Neighborhood
-_(Union of mappings from Sales and Airbnb Listings)
+_(Union of mappings from Sales and Airbnb Listings)_
 
 ### Mapping from Sales
 
@@ -75,8 +75,34 @@ Neighborhood(Hash(nName), nName)
 ```math
 \langle
   \{(nId, nName) \mid
-    \exists lId, \dots, isOut .
-    Airbnb\_Listings(lId, \dots, nName, \dots, isOut)
+    \exists lId, sDate, lName, hId, hSince, hLoc, hNeigh, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore, hList, isOut .
+    Airbnb\_Listings(
+      lId,
+      sDate,
+      lName,
+      hId,
+      hSince,
+      hLoc,
+      hNeigh,
+      nName,
+      bName,
+      lat,
+      lon,
+      pType,
+      rType,
+      cap,
+      sqft,
+      dPrice,
+      minN,
+      maxN,
+      availYear,
+      nRev,
+      fRev,
+      lRev,
+      lScore,
+      hList,
+      isOut
+    )
     \land nId = Hash(nName)
   \},
   \;
@@ -114,8 +140,8 @@ Borough(Hash(bName), bName)
 ```math
 \langle
   \{(bId, bName) \mid
-    \exists sId, nName, \dots, sDate .
-    NYC\_Rolling\_Sales(sId, bName, nName, \dots)
+    \exists sId, nName, bCat, units, sqft, yBuilt, price, sDate .
+    NYC\_Rolling\_Sales(sId, bName, nName, bCat, units, sqft, yBuilt, price, sDate)
     \land bId = Hash(bName)
   \},
   \;
@@ -128,8 +154,34 @@ Borough(Hash(bName), bName)
 
 ```math
 \forall bName . \\
-\exists lId, \dots, isOut . \\
-Airbnb\_Listings(lId, \dots, bName, \dots, isOut)
+\exists lId, sDate, lName, hId, hSince, hLoc, hNeigh, nName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore, hList, isOut . \\
+Airbnb\_Listings(
+  lId,
+  sDate,
+  lName,
+  hId,
+  hSince,
+  hLoc,
+  hNeigh,
+  nName,
+  bName,
+  lat,
+  lon,
+  pType,
+  rType,
+  cap,
+  sqft,
+  dPrice,
+  minN,
+  maxN,
+  availYear,
+  nRev,
+  fRev,
+  lRev,
+  lScore,
+  hList,
+  isOut
+)
 \rightarrow
 Borough(Hash(bName), bName)
 ```
@@ -137,8 +189,34 @@ Borough(Hash(bName), bName)
 ```math
 \langle
   \{(bId, bName) \mid
-    \exists lId, \dots, isOut .
-    Airbnb\_Listings(lId, \dots, bName, \dots)
+    \exists lId, sDate, lName, hId, hSince, hLoc, hNeigh, nName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore, hList, isOut .
+    Airbnb\_Listings(
+      lId,
+      sDate,
+      lName,
+      hId,
+      hSince,
+      hLoc,
+      hNeigh,
+      nName,
+      bName,
+      lat,
+      lon,
+      pType,
+      rType,
+      cap,
+      sqft,
+      dPrice,
+      minN,
+      maxN,
+      availYear,
+      nRev,
+      fRev,
+      lRev,
+      lScore,
+      hList,
+      isOut
+    )
     \land bId = Hash(bName)
   \},
   \;
@@ -174,8 +252,8 @@ Borough(Hash(bName), bName)
 ```math
 \langle
   \{(bId, bName) \mid
-    \exists cId, \dots, lon .
-    NYPD\_Complaints(cId, bName, \dots)
+    \exists cId, cDate, offStat, offLvl, premPos, offType, premType, vSex, vAge, lat, lon .
+    NYPD\_Complaints(cId, bName, cDate, offStat, offLvl, premPos, offType, premType, vSex, vAge, lat, lon)
     \land bId = Hash(bName)
   \},
   \;
@@ -355,10 +433,26 @@ AirbnbListing(
       sDate,
       lName,
       hId,
-      \dots,
+      hSince,
+      hLoc,
+      hNeigh,
+      nName,
+      bName,
       lat,
       lon,
-      \dots,
+      pType,
+      rType,
+      cap,
+      sqft,
+      dPrice,
+      minN,
+      maxN,
+      availYear,
+      nRev,
+      fRev,
+      lRev,
+      lScore,
+      hList,
       isOut
     )
     \land geo = ToPoint(lat, lon)
