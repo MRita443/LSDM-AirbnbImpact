@@ -436,21 +436,6 @@
   </notepads>
   <order>
     <hop>
-      <from>Hash Borough</from>
-      <to>Hash Neighborhood</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Hash Neighborhood</from>
-      <to>Output PropertySale</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Map Borough</from>
-      <to>Uppercase Strs</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>CSV file input</from>
       <to>Null if</to>
       <enabled>Y</enabled>
@@ -466,73 +451,23 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows</from>
-      <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows</from>
-      <to>Generate id</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Generate id</from>
-      <to>Map Borough</to>
+      <from>Generate ID</from>
+      <to>Uppercase Strs</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Uppercase Strs</from>
-      <to>Hash Borough</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Output PropertySale</from>
-      <to>Output locatedIn</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Unique rows</from>
-      <to>Output boroughs</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Hash Borough</from>
-      <to>Sort rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows</from>
-      <to>Unique rows</to>
+      <to>Hash Neighborhood</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Hash Neighborhood</from>
-      <to>Sort rows 2</to>
+      <to>Output Sales</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Sort rows 2</from>
-      <to>Unique rows 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Unique rows 3</from>
-      <to>Output Neighborhoods</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Hash Neighborhood</from>
-      <to>Sort rows 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows 3</from>
-      <to>Unique rows 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Unique rows 2</from>
-      <to>Output partOf</to>
+      <from>Filter rows</from>
+      <to>Generate ID</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -547,7 +482,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_raw/nyc-rolling-sales.csv</filename>
+    <filename>${Internal.Entry.Current.Directory}/../data_raw/nyc-rolling-sales.csv</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
@@ -562,17 +497,6 @@
     <format>mixed</format>
     <encoding/>
     <fields>
-      <field>
-        <name>BOROUGH</name>
-        <type>Integer</type>
-        <format>#</format>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>15</length>
-        <precision>0</precision>
-        <trim_type>none</trim_type>
-      </field>
       <field>
         <name>NEIGHBORHOOD</name>
         <type>String</type>
@@ -666,386 +590,6 @@
     </GUI>
   </step>
   <step>
-    <name>Filter rows</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>Generate id</send_true_to>
-    <send_false_to>Dummy (do nothing)</send_false_to>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>SALE PRICE</leftvalue>
-        <function>&gt;</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>String</type>
-          <text>10000</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask/>
-        </value>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>112</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Generate id</name>
-    <type>Sequence</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <valuename>sale_id</valuename>
-    <use_database>N</use_database>
-    <connection>LSDM_AirbnbImpact_DB</connection>
-    <schema/>
-    <seqname>SEQ_</seqname>
-    <use_counter>Y</use_counter>
-    <counter_name/>
-    <start_at>1</start_at>
-    <increment_by>1</increment_by>
-    <max_value>999999999</max_value>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>208</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Hash Borough</name>
-    <type>CheckSum</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <checksumtype>CRC32</checksumtype>
-    <resultfieldName>borough_id</resultfieldName>
-    <resultType>hexadecimal</resultType>
-    <compatibilityMode>N</compatibilityMode>
-    <oldChecksumBehaviour>N</oldChecksumBehaviour>
-    <evaluationMethod>BYTES</evaluationMethod>
-    <fieldSeparatorString/>
-    <fields>
-      <field>
-        <name>borough_name</name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>464</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Hash Neighborhood</name>
-    <type>CheckSum</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <checksumtype>CRC32</checksumtype>
-    <resultfieldName>neighborhood_id</resultfieldName>
-    <resultType>hexadecimal</resultType>
-    <compatibilityMode>N</compatibilityMode>
-    <oldChecksumBehaviour>N</oldChecksumBehaviour>
-    <evaluationMethod>BYTES</evaluationMethod>
-    <fieldSeparatorString/>
-    <fields>
-      <field>
-        <name>neighborhood</name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>528</xloc>
-      <yloc>464</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Map Borough</name>
-    <type>ValueMapper</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <field_to_use>BOROUGH</field_to_use>
-    <target_field>borough_name</target_field>
-    <non_match_default/>
-    <fields>
-      <field>
-        <source_value>1</source_value>
-        <target_value>MANHATTAN</target_value>
-      </field>
-      <field>
-        <source_value>2</source_value>
-        <target_value>BRONX</target_value>
-      </field>
-      <field>
-        <source_value>3</source_value>
-        <target_value>BROOKLYN</target_value>
-      </field>
-      <field>
-        <source_value>4</source_value>
-        <target_value>QUEENS</target_value>
-      </field>
-      <field>
-        <source_value>5</source_value>
-        <target_value>STATEN ISLAND</target_value>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>304</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Null if</name>
-    <type>NullIf</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>YEAR BUILT</name>
-        <value>0</value>
-      </field>
-      <field>
-        <name>GROSS SQUARE FEET</name>
-        <value>-</value>
-      </field>
-      <field>
-        <name>SALE PRICE</name>
-        <value>-</value>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>144</xloc>
-      <yloc>112</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Output PropertySale</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>LSDM_AirbnbImpact_DB</connection>
-    <schema>public</schema>
-    <table>propertysale</table>
-    <commit>1000</commit>
-    <truncate>Y</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>N</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-      <field>
-        <column_name>building_category</column_name>
-        <stream_name>BUILDING CLASS CATEGORY</stream_name>
-      </field>
-      <field>
-        <column_name>total_units</column_name>
-        <stream_name>TOTAL UNITS</stream_name>
-      </field>
-      <field>
-        <column_name>gross_sqft</column_name>
-        <stream_name>GROSS SQUARE FEET</stream_name>
-      </field>
-      <field>
-        <column_name>year_built</column_name>
-        <stream_name>YEAR BUILT</stream_name>
-      </field>
-      <field>
-        <column_name>sale_price</column_name>
-        <stream_name>SALE PRICE</stream_name>
-      </field>
-      <field>
-        <column_name>sale_date</column_name>
-        <stream_name>SALE DATE</stream_name>
-      </field>
-      <field>
-        <column_name>sale_id</column_name>
-        <stream_name>sale_id</stream_name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>528</xloc>
-      <yloc>608</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Uppercase Strs</name>
-    <type>StringOperations</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>NEIGHBORHOOD</in_stream_name>
-        <out_stream_name/>
-        <trim_type>none</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>BUILDING CLASS CATEGORY</in_stream_name>
-        <out_stream_name/>
-        <trim_type>none</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>borough_name</in_stream_name>
-        <out_stream_name/>
-        <trim_type>none</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>384</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Change Types</name>
     <type>SelectValues</type>
     <description/>
@@ -1108,8 +652,8 @@
     </GUI>
   </step>
   <step>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1118,6 +662,60 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
+    <send_true_to>Generate ID</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>SALE PRICE</leftvalue>
+        <function>&gt;</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>10000</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>112</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Generate ID</name>
+    <type>Sequence</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <valuename>sale_id</valuename>
+    <use_database>N</use_database>
+    <connection>LSDM_AirbnbImpact_DB</connection>
+    <schema/>
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name/>
+    <start_at>1</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1133,41 +731,25 @@
     </GUI>
   </step>
   <step>
-    <name>Output boroughs</name>
-    <type>TableOutput</type>
+    <name>Hash Neighborhood</name>
+    <type>CheckSum</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>LSDM_AirbnbImpact_DB</connection>
-    <schema>public</schema>
-    <table>borough</table>
-    <commit>1000</commit>
-    <truncate>Y</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
+    <checksumtype>CRC32</checksumtype>
+    <resultfieldName>neighborhood_id</resultfieldName>
+    <resultType>hexadecimal</resultType>
+    <compatibilityMode>N</compatibilityMode>
+    <oldChecksumBehaviour>N</oldChecksumBehaviour>
+    <evaluationMethod>BYTES</evaluationMethod>
     <fields>
       <field>
-        <column_name>name</column_name>
-        <stream_name>borough_name</stream_name>
-      </field>
-      <field>
-        <column_name>borough_id</column_name>
-        <stream_name>borough_id</stream_name>
+        <name>neighborhood</name>
       </field>
     </fields>
     <attributes/>
@@ -1179,14 +761,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>800</yloc>
+      <xloc>720</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Output Neighborhoods</name>
-    <type>TableOutput</type>
+    <name>Null if</name>
+    <type>NullIf</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1195,31 +777,18 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>LSDM_AirbnbImpact_DB</connection>
-    <schema>public</schema>
-    <table>neighborhood</table>
-    <commit>1000</commit>
-    <truncate>Y</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
     <fields>
       <field>
-        <column_name>name</column_name>
-        <stream_name>NEIGHBORHOOD</stream_name>
+        <name>YEAR BUILT</name>
+        <value>0</value>
       </field>
       <field>
-        <column_name>neighborhood_id</column_name>
-        <stream_name>neighborhood_id</stream_name>
+        <name>GROSS SQUARE FEET</name>
+        <value>-</value>
+      </field>
+      <field>
+        <name>SALE PRICE</name>
+        <value>-</value>
       </field>
     </fields>
     <attributes/>
@@ -1231,13 +800,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>800</xloc>
-      <yloc>352</yloc>
+      <xloc>144</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Output locatedIn</name>
+    <name>Output Sales</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1249,11 +818,11 @@
     </partitioning>
     <connection>LSDM_AirbnbImpact_DB</connection>
     <schema>public</schema>
-    <table>locatedin</table>
-    <commit>1000</commit>
+    <table>nyc_rolling_sales</table>
+    <commit>5000</commit>
     <truncate>Y</truncate>
     <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
+    <use_batch>N</use_batch>
     <specify_fields>Y</specify_fields>
     <partitioning_enabled>N</partitioning_enabled>
     <partitioning_field/>
@@ -1266,7 +835,31 @@
     <return_field/>
     <fields>
       <field>
-        <column_name>entity_id</column_name>
+        <column_name>building_category</column_name>
+        <stream_name>BUILDING CLASS CATEGORY</stream_name>
+      </field>
+      <field>
+        <column_name>total_units</column_name>
+        <stream_name>TOTAL UNITS</stream_name>
+      </field>
+      <field>
+        <column_name>gross_sqft</column_name>
+        <stream_name>GROSS SQUARE FEET</stream_name>
+      </field>
+      <field>
+        <column_name>year_built</column_name>
+        <stream_name>YEAR BUILT</stream_name>
+      </field>
+      <field>
+        <column_name>sale_price</column_name>
+        <stream_name>SALE PRICE</stream_name>
+      </field>
+      <field>
+        <column_name>sale_date</column_name>
+        <stream_name>SALE DATE</stream_name>
+      </field>
+      <field>
+        <column_name>sale_id</column_name>
         <stream_name>sale_id</stream_name>
       </field>
       <field>
@@ -1283,14 +876,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>528</xloc>
-      <yloc>704</yloc>
+      <xloc>848</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Output partOf</name>
-    <type>TableOutput</type>
+    <name>Uppercase Strs</name>
+    <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1299,31 +892,32 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>LSDM_AirbnbImpact_DB</connection>
-    <schema>public</schema>
-    <table>partof</table>
-    <commit>1000</commit>
-    <truncate>Y</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
     <fields>
       <field>
-        <column_name>borough_id</column_name>
-        <stream_name>borough_id</stream_name>
+        <in_stream_name>NEIGHBORHOOD</in_stream_name>
+        <out_stream_name/>
+        <trim_type>none</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
       </field>
       <field>
-        <column_name>neighborhood_id</column_name>
-        <stream_name>neighborhood_id</stream_name>
+        <in_stream_name>BUILDING CLASS CATEGORY</in_stream_name>
+        <out_stream_name/>
+        <trim_type>none</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
       </field>
     </fields>
     <attributes/>
@@ -1335,251 +929,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>880</xloc>
-      <yloc>464</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Unique rows</name>
-    <type>Unique</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <count_rows>N</count_rows>
-    <count_field/>
-    <reject_duplicate_row>N</reject_duplicate_row>
-    <error_description/>
-    <fields>
-      <field>
-        <name>borough_id</name>
-        <case_insensitive>N</case_insensitive>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>688</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Sort rows</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>1000000</sort_size>
-    <free_memory/>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>N</unique_rows>
-    <fields>
-      <field>
-        <name>borough_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>592</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Sort rows 2</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>1000000</sort_size>
-    <free_memory/>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>N</unique_rows>
-    <fields>
-      <field>
-        <name>neighborhood_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>528</xloc>
-      <yloc>352</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Sort rows 3</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>1000000</sort_size>
-    <free_memory/>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>N</unique_rows>
-    <fields>
-      <field>
-        <name>neighborhood_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-      <field>
-        <name>borough_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>656</xloc>
-      <yloc>464</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Unique rows 2</name>
-    <type>Unique</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <count_rows>N</count_rows>
-    <count_field/>
-    <reject_duplicate_row>N</reject_duplicate_row>
-    <error_description/>
-    <fields>
-      <field>
-        <name>neighborhood_id</name>
-        <case_insensitive>N</case_insensitive>
-      </field>
-      <field>
-        <name>borough_id</name>
-        <case_insensitive>N</case_insensitive>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>752</xloc>
-      <yloc>464</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Unique rows 3</name>
-    <type>Unique</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <count_rows>N</count_rows>
-    <count_field/>
-    <reject_duplicate_row>N</reject_duplicate_row>
-    <error_description/>
-    <fields>
-      <field>
-        <name>neighborhood_id</name>
-        <case_insensitive>N</case_insensitive>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>656</xloc>
-      <yloc>352</yloc>
+      <xloc>576</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

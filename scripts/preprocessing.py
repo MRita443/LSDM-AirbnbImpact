@@ -55,6 +55,7 @@ AIRBNB_COL_MAP = {
     "last_scraped": "scrape_date",
     "name": "listing_name",
     "host_id": "host_id",
+    "host_name": "host_name",
     "host_since": "host_since",
     "host_location": "host_location",
     "host_neighbourhood": "host_neighborhood",

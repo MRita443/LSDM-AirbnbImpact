@@ -74,7 +74,7 @@ Represents a specific unit or room available for short-term rental on the platfo
 
 ### **AirbnbHost**
 
-**AirbnbHost**(`host_id`, `account_created`, `location`, `is_outside_nyc`, `num_local_listings`)
+**AirbnbHost**(`host_id`, `host_name`, `account_created`, `location`, `is_outside_nyc`, `num_local_listings`)
 
 Represents the registered owner or manager of one or more listings.
 

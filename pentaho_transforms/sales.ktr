@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>complaints</name>
+    <name>sales</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -426,9 +426,9 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2026/02/07 18:46:47.671</created_date>
+    <created_date>2026/02/06 16:20:25.067</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2026/02/07 18:46:47.671</modified_date>
+    <modified_date>2026/02/06 16:20:25.067</modified_date>
     <key_for_session_key>H4sIAAAAAAAA/wMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
@@ -436,28 +436,38 @@
   </notepads>
   <order>
     <hop>
-      <from>Concat date and time</from>
-      <to>Cast to Date</to>
+      <from>CSV file input</from>
+      <to>Null if</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>CSV file input</from>
+      <from>Null if</from>
+      <to>Change Types</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Change Types</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Generate ID</from>
       <to>Uppercase Strs</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Cast to Date</from>
+      <from>Uppercase Strs</from>
       <to>Hash Neighborhood</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Hash Neighborhood</from>
-      <to>Output Complaints</to>
+      <to>Output Sales</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Uppercase Strs</from>
-      <to>Concat date and time</to>
+      <from>Filter rows</from>
+      <to>Generate ID</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -472,7 +482,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>${Internal.Entry.Current.Directory}/data_extra/nypd-complaints-neighborhoods.csv</filename>
+    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_raw/nyc-rolling-sales.csv</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
@@ -488,7 +498,29 @@
     <encoding/>
     <fields>
       <field>
-        <name>CMPLNT_NUM</name>
+        <name>NEIGHBORHOOD</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>BUILDING CLASS CATEGORY</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>13</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>TOTAL UNITS</name>
         <type>Integer</type>
         <format>#</format>
         <currency/>
@@ -499,136 +531,48 @@
         <trim_type>none</trim_type>
       </field>
       <field>
-        <name>CMPLNT_FR_DT</name>
+        <name>GROSS SQUARE FEET</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>YEAR BUILT</name>
+        <type>Integer</type>
+        <format>#</format>
+        <currency/>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>SALE PRICE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>2</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>SALE DATE</name>
         <type>Date</type>
-        <format>MM/dd/yyyy</format>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>CMPLNT_FR_TM</name>
-        <type>String</type>
-        <format/>
+        <format>yyyy-MM-dd</format>
         <currency/>
         <decimal>.</decimal>
         <group>,</group>
         <length>8</length>
         <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>CRM_ATPT_CPTD_CD</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>9</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>LAW_CAT_CD</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>11</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>LOC_OF_OCCUR_DESC</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>8</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>OFNS_DESC</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>29</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>PREM_TYP_DESC</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>26</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>VIC_AGE_GROUP</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>7</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>VIC_SEX</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>Latitude</name>
-        <type>BigNumber</type>
-        <format>#.###########</format>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>14</length>
-        <precision>11</precision>
         <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>Longitude</name>
-        <type>BigNumber</type>
-        <format>#.###########</format>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>15</length>
-        <precision>11</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>neighbourhood</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>19</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
       </field>
     </fields>
     <attributes/>
@@ -640,13 +584,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
-      <yloc>240</yloc>
+      <xloc>48</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Cast to Date</name>
+    <name>Change Types</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -659,12 +603,29 @@
     <fields>
       <select_unspecified>N</select_unspecified>
       <meta>
-        <name>timestamp_str</name>
-        <rename>timestamp</rename>
-        <type>Date</type>
+        <name>GROSS SQUARE FEET</name>
+        <rename>GROSS SQUARE FEET</rename>
+        <type>Integer</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>MM/dd/yyyy HH:mm:ss</conversion_mask>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>SALE PRICE</name>
+        <rename>SALE PRICE</rename>
+        <type>Number</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -685,14 +646,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>578</xloc>
-      <yloc>240</yloc>
+      <xloc>240</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Concat date and time</name>
-    <type>ConcatFields</type>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -701,67 +662,25 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <separator> </separator>
-    <enclosure>"</enclosure>
-    <enclosure_forced>N</enclosure_forced>
-    <enclosure_fix_disabled>N</enclosure_fix_disabled>
-    <header>N</header>
-    <footer>N</footer>
-    <format>DOS</format>
-    <compression>None</compression>
-    <encoding/>
-    <endedLine/>
-    <fileNameInField>N</fileNameInField>
-    <fileNameField/>
-    <create_parent_folder>Y</create_parent_folder>
-    <file>
-      <name/>
-      <servlet_output>N</servlet_output>
-      <do_not_open_new_file_init>Y</do_not_open_new_file_init>
-      <extention>txt</extention>
-      <append>N</append>
-      <split>N</split>
-      <haspartno>N</haspartno>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <SpecifyFormat>N</SpecifyFormat>
-      <date_time_format/>
-      <add_to_result_filenames>Y</add_to_result_filenames>
-      <pad>N</pad>
-      <fast_dump>N</fast_dump>
-      <splitevery>0</splitevery>
-    </file>
-    <fields>
-      <field>
-        <name>CMPLNT_FR_DT</name>
-        <type>None</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>none</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>CMPLNT_FR_TM</name>
-        <type>None</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>none</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-    </fields>
-    <ConcatFields>
-      <targetFieldName>timestamp_str</targetFieldName>
-      <targetFieldLength>0</targetFieldLength>
-      <removeSelectedFields>Y</removeSelectedFields>
-    </ConcatFields>
+    <send_true_to>Generate ID</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>SALE PRICE</leftvalue>
+        <function>&gt;</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>10000</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -771,8 +690,43 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>412</xloc>
-      <yloc>240</yloc>
+      <xloc>352</xloc>
+      <yloc>112</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Generate ID</name>
+    <type>Sequence</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <valuename>sale_id</valuename>
+    <use_database>N</use_database>
+    <connection>LSDM_AirbnbImpact_DB</connection>
+    <schema/>
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name/>
+    <start_at>1</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>464</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -793,9 +747,10 @@
     <compatibilityMode>N</compatibilityMode>
     <oldChecksumBehaviour>N</oldChecksumBehaviour>
     <evaluationMethod>BYTES</evaluationMethod>
+    <fieldSeparatorString/>
     <fields>
       <field>
-        <name>neighbourhood</name>
+        <name>neighborhood</name>
       </field>
     </fields>
     <attributes/>
@@ -807,13 +762,52 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>744</xloc>
-      <yloc>240</yloc>
+      <xloc>720</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Output Complaints</name>
+    <name>Null if</name>
+    <type>NullIf</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>YEAR BUILT</name>
+        <value>0</value>
+      </field>
+      <field>
+        <name>GROSS SQUARE FEET</name>
+        <value>-</value>
+      </field>
+      <field>
+        <name>SALE PRICE</name>
+        <value>-</value>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>144</xloc>
+      <yloc>112</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Output Sales</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -825,11 +819,11 @@
     </partitioning>
     <connection>LSDM_AirbnbImpact_DB</connection>
     <schema>public</schema>
-    <table>nypd_complaints</table>
+    <table>nyc_rolling_sales</table>
     <commit>5000</commit>
     <truncate>Y</truncate>
     <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
+    <use_batch>N</use_batch>
     <specify_fields>Y</specify_fields>
     <partitioning_enabled>N</partitioning_enabled>
     <partitioning_field/>
@@ -842,52 +836,36 @@
     <return_field/>
     <fields>
       <field>
-        <column_name>complaint_id</column_name>
-        <stream_name>CMPLNT_NUM</stream_name>
+        <column_name>building_category</column_name>
+        <stream_name>BUILDING CLASS CATEGORY</stream_name>
       </field>
       <field>
-        <column_name>offense_status</column_name>
-        <stream_name>CRM_ATPT_CPTD_CD</stream_name>
+        <column_name>total_units</column_name>
+        <stream_name>TOTAL UNITS</stream_name>
       </field>
       <field>
-        <column_name>offense_level</column_name>
-        <stream_name>LAW_CAT_CD</stream_name>
+        <column_name>gross_sqft</column_name>
+        <stream_name>GROSS SQUARE FEET</stream_name>
       </field>
       <field>
-        <column_name>premise_pos</column_name>
-        <stream_name>LOC_OF_OCCUR_DESC</stream_name>
+        <column_name>year_built</column_name>
+        <stream_name>YEAR BUILT</stream_name>
       </field>
       <field>
-        <column_name>offense_type</column_name>
-        <stream_name>OFNS_DESC</stream_name>
+        <column_name>sale_price</column_name>
+        <stream_name>SALE PRICE</stream_name>
       </field>
       <field>
-        <column_name>premise_type</column_name>
-        <stream_name>PREM_TYP_DESC</stream_name>
+        <column_name>sale_date</column_name>
+        <stream_name>SALE DATE</stream_name>
       </field>
       <field>
-        <column_name>victim_age_group</column_name>
-        <stream_name>VIC_AGE_GROUP</stream_name>
-      </field>
-      <field>
-        <column_name>victim_sex</column_name>
-        <stream_name>VIC_SEX</stream_name>
-      </field>
-      <field>
-        <column_name>latitude</column_name>
-        <stream_name>Latitude</stream_name>
-      </field>
-      <field>
-        <column_name>longitude</column_name>
-        <stream_name>Longitude</stream_name>
+        <column_name>sale_id</column_name>
+        <stream_name>sale_id</stream_name>
       </field>
       <field>
         <column_name>neighborhood_id</column_name>
         <stream_name>neighborhood_id</stream_name>
-      </field>
-      <field>
-        <column_name>complaint_timestamp</column_name>
-        <stream_name>timestamp</stream_name>
       </field>
     </fields>
     <attributes/>
@@ -899,8 +877,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>910</xloc>
-      <yloc>240</yloc>
+      <xloc>848</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -908,7 +886,7 @@
     <name>Uppercase Strs</name>
     <type>StringOperations</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -917,9 +895,9 @@
     </partitioning>
     <fields>
       <field>
-        <in_stream_name>CMPLNT_FR_TM</in_stream_name>
+        <in_stream_name>NEIGHBORHOOD</in_stream_name>
         <out_stream_name/>
-        <trim_type>both</trim_type>
+        <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
         <padding_type>none</padding_type>
         <pad_char/>
@@ -930,100 +908,9 @@
         <remove_special_characters>none</remove_special_characters>
       </field>
       <field>
-        <in_stream_name>LAW_CAT_CD</in_stream_name>
+        <in_stream_name>BUILDING CLASS CATEGORY</in_stream_name>
         <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>LOC_OF_OCCUR_DESC</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>OFNS_DESC</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>PREM_TYP_DESC</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>VIC_AGE_GROUP</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>VIC_SEX</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>CRM_ATPT_CPTD_CD</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>neighbourhood</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
+        <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
         <padding_type>none</padding_type>
         <pad_char/>
@@ -1043,8 +930,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>246</xloc>
-      <yloc>240</yloc>
+      <xloc>576</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
