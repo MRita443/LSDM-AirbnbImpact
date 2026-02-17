@@ -1232,7 +1232,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_raw/nyc-rolling-sales.csv</filename>
+    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_processed/nyc-rolling-sales-std-neighborhoods_pentaho.csv</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>

@@ -533,17 +533,6 @@
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>neighbourhood_group_cleansed</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>6</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
         <name>latitude</name>
         <type>BigNumber</type>
         <format>#.###############</format>
