@@ -1,0 +1,345 @@
+@prefix : <http://example.org/nyc-vkg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix obda: <https://w3id.org/obda/vocabulary#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://example.org/nyc-vkg#> .
+
+<http://example.org/nyc-vkg#NYCVirtualKnowledgeGraph> rdf:type owl:Ontology .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+###  http://www.w3.org/2001/XMLSchema#gYear
+xsd:gYear rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.org/nyc-vkg#locatedIn
+:locatedIn rdf:type owl:ObjectProperty ;
+           rdfs:domain owl:Thing ;
+           rdfs:range :Place .
+
+
+###  http://example.org/nyc-vkg#owns
+:owns rdf:type owl:ObjectProperty ;
+      rdfs:domain :AirbnbHost ;
+      rdfs:range :AirbnbListing .
+
+
+###  http://example.org/nyc-vkg#partOf
+:partOf rdf:type owl:ObjectProperty ;
+        rdfs:domain :Neighborhood ;
+        rdfs:range :Borough .
+
+
+###  http://example.org/nyc-vkg#hasLocation
+:hasLocation rdf:type owl:ObjectProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :Point .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.org/nyc-vkg#account_created
+:account_created rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :AirbnbHost ;
+                 rdfs:range xsd:date .
+
+
+###  http://example.org/nyc-vkg#availability_year
+:availability_year rdf:type owl:DatatypeProperty ;
+                   rdfs:domain :AirbnbListing ;
+                   rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#borough_id
+:borough_id rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Borough ;
+            rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#building_category
+:building_category rdf:type owl:DatatypeProperty ;
+                   rdfs:domain :PropertySale ;
+                   rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#capacity
+:capacity rdf:type owl:DatatypeProperty ;
+          rdfs:domain :AirbnbListing ;
+          rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#complaint_id
+:complaint_id rdf:type owl:DatatypeProperty ;
+              rdfs:domain :CriminalComplaint ;
+              rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#daily_price
+:daily_price rdf:type owl:DatatypeProperty ;
+             rdfs:domain :AirbnbListing ;
+             rdfs:range xsd:decimal .
+
+
+###  http://example.org/nyc-vkg#first_review_date
+:first_review_date rdf:type owl:DatatypeProperty ;
+                   rdfs:domain :AirbnbListing ;
+                   rdfs:range xsd:date .
+
+
+###  http://example.org/nyc-vkg#gross_sqft
+:gross_sqft rdf:type owl:DatatypeProperty ;
+            rdfs:domain :PropertySale ;
+            rdfs:range xsd:decimal .
+
+
+###  http://example.org/nyc-vkg#host_id
+:host_id rdf:type owl:DatatypeProperty ;
+         rdfs:domain :AirbnbHost ;
+         rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#host_name
+:host_name rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirbnbHost ;
+    rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#host_location
+:host_location rdf:type owl:DatatypeProperty ;
+               rdfs:domain :AirbnbHost ;
+               rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#is_outside_nyc
+:is_outside_nyc rdf:type owl:DatatypeProperty ;
+                rdfs:domain :AirbnbHost ;
+                rdfs:range xsd:boolean .
+
+
+###  http://example.org/nyc-vkg#last_review_date
+:last_review_date rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :AirbnbListing ;
+                  rdfs:range xsd:date .
+
+
+###  http://example.org/nyc-vkg#latitude
+:latitude rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Point ;
+          rdfs:range xsd:double .
+
+
+###  http://example.org/nyc-vkg#listing_date
+:listing_date rdf:type owl:DatatypeProperty ;
+              rdfs:domain :AirbnbListing ;
+              rdfs:range xsd:date .
+
+
+###  http://example.org/nyc-vkg#listing_id
+:listing_id rdf:type owl:DatatypeProperty ;
+            rdfs:domain :AirbnbListing ;
+            rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#listing_name
+:listing_name rdf:type owl:DatatypeProperty ;
+              rdfs:domain :AirbnbListing ;
+              rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#location_score
+:location_score rdf:type owl:DatatypeProperty ;
+                rdfs:domain :AirbnbListing ;
+                rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#longitude
+:longitude rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Point ;
+           rdfs:range xsd:double .
+
+
+###  http://example.org/nyc-vkg#max_nights
+:max_nights rdf:type owl:DatatypeProperty ;
+            rdfs:domain :AirbnbListing ;
+            rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#min_nights
+:min_nights rdf:type owl:DatatypeProperty ;
+            rdfs:domain :AirbnbListing ;
+            rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#name
+:name rdf:type owl:DatatypeProperty ;
+      rdfs:domain owl:Thing ;
+      rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#neighborhood_id
+:neighborhood_id rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :Neighborhood ;
+                 rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#num_local_listings
+:num_local_listings rdf:type owl:DatatypeProperty ;
+                    rdfs:domain :AirbnbHost ;
+                    rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#offense_level
+:offense_level rdf:type owl:DatatypeProperty ;
+               rdfs:domain :CriminalComplaint ;
+               rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#offense_status
+:offense_status rdf:type owl:DatatypeProperty ;
+                rdfs:domain :CriminalComplaint ;
+                rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#offense_type
+:offense_type rdf:type owl:DatatypeProperty ;
+              rdfs:domain :CriminalComplaint ;
+              rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#premise_pos
+:premise_pos rdf:type owl:DatatypeProperty ;
+             rdfs:domain :CriminalComplaint ;
+             rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#premise_type
+:premise_type rdf:type owl:DatatypeProperty ;
+              rdfs:domain :CriminalComplaint ;
+              rdfs:range xsd:string .
+
+
+:timestamp rdf:type owl:DatatypeProperty ;
+    rdfs:domain :CriminalComplaint ;
+    rdfs:range xsd:dateTime .
+
+
+###  http://example.org/nyc-vkg#property_type
+:property_type rdf:type owl:DatatypeProperty ;
+               rdfs:domain :AirbnbListing ;
+               rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#room_type
+:room_type rdf:type owl:DatatypeProperty ;
+           rdfs:domain :AirbnbListing ;
+           rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#sale_date
+:sale_date rdf:type owl:DatatypeProperty ;
+           rdfs:domain :PropertySale ;
+           rdfs:range xsd:date .
+
+
+###  http://example.org/nyc-vkg#sale_id
+:sale_id rdf:type owl:DatatypeProperty ;
+         rdfs:domain :PropertySale ;
+         rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#sale_price
+:sale_price rdf:type owl:DatatypeProperty ;
+            rdfs:domain :PropertySale ;
+            rdfs:range xsd:decimal .
+
+
+###  http://example.org/nyc-vkg#square_feet
+:square_feet rdf:type owl:DatatypeProperty ;
+             rdfs:domain :AirbnbListing ;
+             rdfs:range xsd:decimal .
+
+
+###  http://example.org/nyc-vkg#timestamp
+:timestamp rdf:type owl:DatatypeProperty ;
+           rdfs:domain :CriminalComplaint ;
+           rdfs:range xsd:dateTime .
+
+
+###  http://example.org/nyc-vkg#total_units
+:total_units rdf:type owl:DatatypeProperty ;
+             rdfs:domain :PropertySale ;
+             rdfs:range xsd:integer .
+
+
+###  http://example.org/nyc-vkg#victim_age_group
+:victim_age_group rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :CriminalComplaint ;
+                  rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#victim_sex
+:victim_sex rdf:type owl:DatatypeProperty ;
+            rdfs:domain :CriminalComplaint ;
+            rdfs:range xsd:string .
+
+
+###  http://example.org/nyc-vkg#year_built
+:year_built rdf:type owl:DatatypeProperty ;
+            rdfs:domain :PropertySale ;
+            rdfs:range xsd:gYear .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.org/nyc-vkg#AirbnbHost
+:AirbnbHost rdf:type owl:Class .
+
+
+###  http://example.org/nyc-vkg#AirbnbListing
+:AirbnbListing rdf:type owl:Class .
+
+
+###  http://example.org/nyc-vkg#Borough
+:Borough rdf:type owl:Class ;
+         rdfs:subClassOf :Place .
+
+
+###  http://example.org/nyc-vkg#CriminalComplaint
+:CriminalComplaint rdf:type owl:Class .
+
+
+###  http://example.org/nyc-vkg#Neighborhood
+:Neighborhood rdf:type owl:Class ;
+              rdfs:subClassOf :Place .
+
+
+###  http://example.org/nyc-vkg#Place
+:Place rdf:type owl:Class .
+
+
+###  http://example.org/nyc-vkg#Point
+:Point rdf:type owl:Class .
+
+
+###  http://example.org/nyc-vkg#PropertySale
+:PropertySale rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi

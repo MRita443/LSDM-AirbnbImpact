@@ -1,0 +1,29 @@
+PREFIX : <http://example.org/nyc-vkg#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+    ?neighborhoodName
+    (AVG(?sale_price / ?gross_sqft) AS ?avgPricePerSqft)
+    (COUNT(DISTINCT ?specHost) AS ?numSpecHosts)
+WHERE {
+
+    ?neighborhood :name ?neighborhoodName .
+
+    # Speculator Hosts
+    ?specHost a :AirbnbHost ;
+              :is_outside_nyc true ;
+              :account_created ?since .
+    FILTER(?since > "2016-09-01"^^xsd:date)
+
+    ?specHost ^:owns ?listing .
+    ?listing :locatedIn ?neighborhood  .
+
+    # Sales
+    ?sale a :PropertySale ;
+          :sale_price ?sale_price ;
+          :gross_sqft ?gross_sqft ;
+          :locatedIn ?neighborhood .
+    FILTER(?gross_sqft > 0)
+}
+GROUP BY ?neighborhoodName
+ORDER BY DESC(?avgPricePerSqft) DESC(?numSpecHosts)

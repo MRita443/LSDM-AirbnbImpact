@@ -1,0 +1,123 @@
+[PrefixDeclaration]
+:		http://example.org/nyc-vkg#
+owl:		http://www.w3.org/2002/07/owl#
+rdf:		http://www.w3.org/1999/02/22-rdf-syntax-ns#
+xml:		http://www.w3.org/XML/1998/namespace
+xsd:		http://www.w3.org/2001/XMLSchema#
+obda:		https://w3id.org/obda/vocabulary#
+rdfs:		http://www.w3.org/2000/01/rdf-schema#
+
+[MappingDeclaration] @collection [[
+mappingId	SaleMapping
+target		:sale/{INDEX} a :PropertySale ; :sale_id {INDEX}^^xsd:integer ; :building_category {BUILDING CLASS CATEGORY}^^xsd:string ; :total_units {TOTAL UNITS}^^xsd:integer ; :gross_sqft {GROSS SQUARE FEET}^^xsd:decimal ; :year_built {YEAR BUILT}^^xsd:integer ; :sale_price {SALE PRICE}^^xsd:decimal ; :sale_date {SALE DATE}^^xsd:date ; :locatedIn :neighborhood/{NEIGHBORHOOD} . 
+source		SELECT
+			"INDEX",
+			"SALE PRICE",
+			"SALE DATE",
+			"BUILDING CLASS CATEGORY",
+			"GROSS SQUARE FEET",
+			"TOTAL UNITS",
+			"YEAR BUILT",
+			LOWER(NEIGHBORHOOD) AS NEIGHBORHOOD
+			FROM clean_sales
+
+mappingId	NeighborhoodFromSales
+target		:neighborhood/{NEIGHBORHOOD} a :Neighborhood ; :neighborhood_id {neighborhood_id}^^xsd:integer ; :name {NEIGHBORHOOD}^^xsd:string ; :partOf :borough/{BOROUGH} . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(NEIGHBORHOOD)),1,8))::bit(32)::int) AS neighborhood_id,
+			LOWER(NEIGHBORHOOD) AS NEIGHBORHOOD,
+			LOWER(BOROUGH) AS BOROUGH
+			FROM clean_sales
+
+mappingId	BoroughFromSales
+target		:borough/{BOROUGH} a :Borough ; :borough_id {borough_id}^^xsd:integer ; :name {BOROUGH}^^xsd:string . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(BOROUGH)), 1, 8))::bit(32)::int) AS borough_id,
+			LOWER(BOROUGH) AS BOROUGH
+			FROM clean_sales
+
+mappingId	AirbnbListingMapping
+target		:listing/{id} a :AirbnbListing ; :listing_id {id} ; :listing_name {name} ; :listing_date {last_scraped} ; :property_type {property_type} ; :room_type {room_type} ; :capacity {accommodates} ; :square_feet {square_feet}^^xsd:decimal ; :daily_price {price}^^xsd:decimal ; :min_nights {minimum_nights} ; :max_nights {maximum_nights} ; :availability_year {availability_365} ; :first_review_date {first_review} ; :last_review_date {last_review} ; :number_of_reviews {number_of_reviews} ; :location_score {review_scores_location} ; :hasLocation :point/listing_{id}; :locatedIn :neighborhood/{neighbourhood_cleansed} ; :owns :host/{host_id} . :point/listing_{id} a :Point ; :latitude {Latitude} ; :longitude {Longitude} . :neighborhood/{neighbourhood_cleansed} :partOf :borough/{neighbourhood_group_cleansed} .
+source		SELECT
+			id,
+			name,
+			last_scraped,
+			price,
+			property_type,
+			room_type,
+			accommodates,
+			square_feet,
+			minimum_nights,
+			maximum_nights,
+			availability_365,
+			first_review,
+			last_review,
+			number_of_reviews,
+			review_scores_location,
+			latitude,
+			longitude,
+			LOWER(neighbourhood_cleansed) as neighbourhood_cleansed,
+			neighbourhood_group_cleansed,
+			host_id
+			FROM clean_airbnb
+
+mappingId	AirbnbHostMapping
+target		:host/{host_id} a :AirbnbHost ; :host_id {host_id}^^xsd:integer ; :host_name {host_name}^^xsd:string ; :account_created {host_since}^^xsd:date ; :host_location {host_location}^^xsd:string ; :is_outside_nyc {host_is_outside_nyc}^^xsd:boolean ; :num_local_listings {calculated_host_listings_count}^^xsd:integer . 
+source		SELECT DISTINCT
+			host_id,
+			host_name,
+			host_since,
+			host_location,
+			host_is_outside_nyc,
+			calculated_host_listings_count
+			FROM clean_airbnb
+
+mappingId	NeighborhoodFromAirbnb
+target		:neighborhood/{neighbourhood_cleansed} a :Neighborhood ; :neighborhood_id {neighborhood_id}^^xsd:integer ; :name {neighbourhood_cleansed}^^xsd:string ; :partOf :borough/{neighbourhood_group_cleansed} . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(neighbourhood_cleansed)),1,8))::bit(32)::int) AS neighborhood_id,
+			LOWER(neighbourhood_cleansed) AS neighbourhood_cleansed,
+			LOWER(neighbourhood_group_cleansed) AS neighbourhood_group_cleansed
+			FROM clean_airbnb
+
+mappingId	BoroughFromAirbnb
+target		:borough/{neighbourhood_group_cleansed} a :Borough ; :borough_id {borough_id}^^xsd:integer ; :name {neighbourhood_group_cleansed}^^xsd:string . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(neighbourhood_group_cleansed)), 1, 8))::bit(32)::int) AS borough_id,
+			LOWER(neighbourhood_group_cleansed) AS neighbourhood_group_cleansed
+			FROM clean_airbnb
+
+mappingId	CrimeMapping
+target		:crime/{CMPLNT_NUM} a :CriminalComplaint ; :complaint_id {CMPLNT_NUM}^^xsd:integer ; :timestamp {full_timestamp}^^xsd:dateTime ; :crime_window_end {crime_window_end}^^xsd:date ; :offense_type {OFNS_DESC}^^xsd:string ; :offense_level {LAW_CAT_CD}^^xsd:string ; :offense_status {CRM_ATPT_CPTD_CD}^^xsd:string ; :premise_type {PREM_TYP_DESC}^^xsd:string ; :premise_pos {LOC_OF_OCCUR_DESC}^^xsd:string ; :victim_sex {VIC_SEX}^^xsd:string ; :victim_age_group {VIC_AGE_GROUP}^^xsd:string ; :hasLocation :point/crime_{CMPLNT_NUM} ; :locatedIn :neighborhood/{neighbourhood} . :point/crime_{CMPLNT_NUM} a :Point ; :latitude {Latitude}^^xsd:double ; :longitude {Longitude}^^xsd:double . :neighborhood/{neighbourhood} :partOf :borough/{BORO_NM} .
+source		SELECT
+			CMPLNT_NUM,
+			(CMPLNT_FR_DT + CMPLNT_FR_TM)::timestamp AS full_timestamp,
+			DATE((CMPLNT_FR_DT + CMPLNT_FR_TM)::timestamp + INTERVAL '15 days') AS crime_window_end,
+			OFNS_DESC,
+			LAW_CAT_CD,
+			CRM_ATPT_CPTD_CD,
+			PREM_TYP_DESC,
+			LOC_OF_OCCUR_DESC,
+			VIC_SEX,
+			VIC_AGE_GROUP,
+			Latitude,
+			Longitude,
+			BORO_NM,
+			LOWER(neighbourhood) as neighbourhood
+			FROM clean_nypd
+
+mappingId	NeighborhoodFromCrime
+target		:neighborhood/{neighbourhood} a :Neighborhood ; :neighborhood_id {neighborhood_id}^^xsd:integer ; :name {neighbourhood}^^xsd:string ; :partOf :borough/{BORO_NM} . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(neighbourhood)),1,8))::bit(32)::int) AS neighborhood_id,
+			LOWER(neighbourhood) as neighbourhood,
+			LOWER(BORO_NM) as BORO_NM
+			FROM clean_nypd
+
+mappingId	BoroughFromCrime
+target		:borough/{BORO_NM} a :Borough ; :borough_id {borough_id}^^xsd:integer ; :name {BORO_NM}^^xsd:string . 
+source		SELECT DISTINCT
+			ABS(('x' || substr(md5(LOWER(BORO_NM)), 1, 8))::bit(32)::int) AS borough_id,
+			LOWER(BORO_NM) AS BORO_NM
+			FROM clean_nypd
+]]

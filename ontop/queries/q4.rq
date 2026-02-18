@@ -1,0 +1,27 @@
+PREFIX : <http://example.org/nyc-vkg#>
+
+SELECT ?neighborhoodName (COUNT(DISTINCT ?listing) AS ?suspiciousListings) (COUNT(DISTINCT ?sale) AS ?familyHouseSales)
+WHERE {
+
+  ?neighborhood :name ?neighborhoodName .
+
+  # Residential buildings
+  ?sale a :PropertySale ;
+        :building_category ?cat ;
+        :locatedIn ?neighborhood .
+
+  FILTER(?cat = "01 ONE FAMILY DWELLINGS" || ?cat = "02 TWO FAMILY DWELLINGS")
+
+  # Suspicious Airbnb
+  ?listing a :AirbnbListing ;
+           :room_type "Entire home/apt" ;
+           :availability_year ?avail ;
+           :locatedIn ?neighborhood ;
+           :owns ?host .
+
+  ?host :num_local_listings ?num_local_listings .  
+
+  FILTER(?avail > 300 || ?num_local_listings > 2)
+}
+GROUP BY ?neighborhoodName
+ORDER BY DESC(?suspiciousListings) DESC(?familyHouseSales)

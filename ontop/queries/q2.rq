@@ -1,0 +1,34 @@
+PREFIX : <http://example.org/nyc-vkg#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+    ?neighborhoodName
+    (COUNT(DISTINCT ?listing) AS ?numListings)
+    (COUNT(DISTINCT ?crime) AS ?crimeCount)
+WHERE {
+
+    ?neighborhood :name ?neighborhoodName .
+
+    # Airbnb listing
+    ?listing a :AirbnbListing ;
+             :last_review_date ?reviewDate ;
+             :locatedIn ?neighborhood .
+
+    # Crime
+    ?crime a :CriminalComplaint ;
+           :timestamp ?crimeDate ;
+           :crime_window_end ?crimeWindowEnd ;
+           :offense_type ?type ;
+           :locatedIn ?neighborhood .
+
+    FILTER(?reviewDate >= "2016-06-01"^^xsd:date)
+
+    FILTER(?type IN ("GRAND LARCENY", "PETIT LARCENY"))
+
+    FILTER(
+        ?reviewDate <= ?crimeWindowEnd &&
+        ?reviewDate >= xsd:date(?crimeDate)
+    )
+}
+GROUP BY ?neighborhoodName
+ORDER BY DESC(?crimeCount) DESC(?numListings)
