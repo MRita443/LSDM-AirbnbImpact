@@ -21,8 +21,6 @@ WHERE {
            :offense_type ?type ;
            :locatedIn ?neighborhood .
 
-    FILTER(?reviewDate >= "2016-06-01"^^xsd:date)
-
     FILTER(?type IN ("GRAND LARCENY", "PETIT LARCENY"))
 
     FILTER(
