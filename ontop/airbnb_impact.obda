@@ -9,7 +9,7 @@ rdfs:		http://www.w3.org/2000/01/rdf-schema#
 
 [MappingDeclaration] @collection [[
 mappingId	SaleMapping
-target		:sale/{INDEX} a :PropertySale ; :sale_id {INDEX}^^xsd:integer ; :building_category {BUILDING CLASS CATEGORY}^^xsd:string ; :total_units {TOTAL UNITS}^^xsd:integer ; :gross_sqft {GROSS SQUARE FEET}^^xsd:decimal ; :year_built {YEAR BUILT}^^xsd:integer ; :sale_price {SALE PRICE}^^xsd:decimal ; :sale_date {SALE DATE}^^xsd:date ; :locatedIn :neighborhood/{NEIGHBORHOOD} . 
+target		:sale/{INDEX} a :PropertySale ; :sale_id {INDEX}^^xsd:integer ; :building_category {BUILDING CLASS CATEGORY}^^xsd:string ; :total_units {TOTAL UNITS}^^xsd:integer ; :gross_sqft {GROSS SQUARE FEET}^^xsd:decimal ; :year_built {YEAR BUILT}^^xsd:integer ; :sale_price {SALE PRICE}^^xsd:decimal ; :sale_date {SALE DATE}^^xsd:date ; :locatedIn :neighborhood/{NEIGHBORHOOD} . :neighborhood/{NEIGHBORHOOD} :partOf :borough/{BOROUGH} .
 source		SELECT
 			"INDEX",
 			"SALE PRICE",
@@ -18,7 +18,8 @@ source		SELECT
 			"GROSS SQUARE FEET",
 			"TOTAL UNITS",
 			"YEAR BUILT",
-			LOWER(NEIGHBORHOOD) AS NEIGHBORHOOD
+			LOWER(NEIGHBORHOOD) AS NEIGHBORHOOD,
+			LOWER(BOROUGH) as BOROUGH
 			FROM clean_sales
 
 mappingId	NeighborhoodFromSales
@@ -57,7 +58,7 @@ source		SELECT
 			latitude,
 			longitude,
 			LOWER(neighbourhood_cleansed) as neighbourhood_cleansed,
-			neighbourhood_group_cleansed,
+			LOWER(neighbourhood_group_cleansed) as neighbourhood_group_cleansed,
 			host_id
 			FROM clean_airbnb
 
@@ -102,7 +103,7 @@ source		SELECT
 			VIC_AGE_GROUP,
 			Latitude,
 			Longitude,
-			BORO_NM,
+			LOWER(BORO_NM) as BORO_NM,
 			LOWER(neighbourhood) as neighbourhood
 			FROM clean_nypd
 
