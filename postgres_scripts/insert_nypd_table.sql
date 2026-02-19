@@ -1,0 +1,129 @@
+DROP TABLE IF EXISTS staging_nypd;
+
+CREATE TABLE staging_nypd (
+    CMPLNT_NUM VARCHAR,
+    ADDR_PCT_CD VARCHAR,
+    BORO_NM VARCHAR,
+    CMPLNT_FR_DT VARCHAR,
+    CMPLNT_FR_TM VARCHAR,
+    CMPLNT_TO_DT VARCHAR,
+    CMPLNT_TO_TM VARCHAR,
+    CRM_ATPT_CPTD_CD VARCHAR,
+    HADEVELOPT VARCHAR,
+    HOUSING_PSA VARCHAR,
+    JURISDICTION_CODE VARCHAR,
+    JURIS_DESC VARCHAR,
+    KY_CD VARCHAR,
+    LAW_CAT_CD VARCHAR,
+    LOC_OF_OCCUR_DESC VARCHAR,
+    OFNS_DESC VARCHAR,
+    PARKS_NM VARCHAR,
+    PATROL_BORO VARCHAR,
+    PD_CD VARCHAR,
+    PD_DESC VARCHAR,
+    PREM_TYP_DESC VARCHAR,
+    RPT_DT VARCHAR,
+    STATION_NAME VARCHAR,
+    SUSP_AGE_GROUP VARCHAR,
+    SUSP_RACE VARCHAR,
+    SUSP_SEX VARCHAR,
+    TRANSIT_DISTRICT VARCHAR,
+    VIC_AGE_GROUP VARCHAR,
+    VIC_RACE VARCHAR,
+    VIC_SEX VARCHAR,
+    X_COORD_CD VARCHAR,
+    Y_COORD_CD VARCHAR,
+    Latitude VARCHAR,
+    Longitude VARCHAR,
+    "Lat_Lon" VARCHAR,
+    "New Georeferenced Column" VARCHAR,
+    neighbourhood VARCHAR
+);
+
+
+\copy staging_nypd FROM 'data_processed\nypd-complaints-neighborhoods.csv' WITH (FORMAT csv, HEADER true, QUOTE '"', ESCAPE '\');
+
+
+DROP TABLE IF EXISTS clean_nypd;
+
+CREATE TABLE clean_nypd (
+    CMPLNT_NUM VARCHAR PRIMARY KEY,
+    BORO_NM VARCHAR,
+    CMPLNT_FR_DT DATE,
+    CMPLNT_FR_TM TIME,
+    CRM_ATPT_CPTD_CD VARCHAR,
+    LAW_CAT_CD VARCHAR,
+    LOC_OF_OCCUR_DESC VARCHAR,
+    OFNS_DESC VARCHAR,
+    PREM_TYP_DESC VARCHAR,
+    VIC_SEX VARCHAR,
+    VIC_AGE_GROUP VARCHAR,
+    Latitude DOUBLE PRECISION,
+    Longitude DOUBLE PRECISION,
+    neighbourhood VARCHAR
+);
+
+
+INSERT INTO clean_nypd (
+    CMPLNT_NUM,
+    BORO_NM,
+    CMPLNT_FR_DT,
+    CMPLNT_FR_TM,
+    CRM_ATPT_CPTD_CD,
+    LAW_CAT_CD,
+    LOC_OF_OCCUR_DESC,
+    OFNS_DESC,
+    PREM_TYP_DESC,
+    VIC_SEX,
+    VIC_AGE_GROUP,
+    Latitude,
+    Longitude,
+    neighbourhood
+)
+SELECT
+
+    -- ID
+    NULLIF(TRIM(CMPLNT_NUM), '-') AS CMPLNT_NUM,
+
+    -- Borough (uppercase for consistency like Airbnb)
+    CASE 
+        WHEN TRIM(BORO_NM) IN ('', '-', 'N/A') THEN NULL
+        ELSE UPPER(TRIM(BORO_NM))
+    END AS BORO_NM,
+
+    -- Complaint Date
+    CASE 
+        WHEN TRIM(CMPLNT_FR_DT) IN ('', '-', 'N/A') THEN NULL
+        ELSE TO_DATE(TRIM(CMPLNT_FR_DT), 'MM/DD/YYYY')
+    END AS CMPLNT_FR_DT,
+
+    -- Complaint Time
+    CASE 
+        WHEN TRIM(CMPLNT_FR_TM) IN ('', '-', 'N/A') THEN NULL
+        ELSE TO_TIMESTAMP(TRIM(CMPLNT_FR_TM), 'HH24:MI:SS')::TIME
+    END AS CMPLNT_FR_TM,
+
+    -- Strings cleaned
+    NULLIF(TRIM(CRM_ATPT_CPTD_CD), '-') AS CRM_ATPT_CPTD_CD,
+    NULLIF(TRIM(LAW_CAT_CD), '-') AS LAW_CAT_CD,
+    NULLIF(TRIM(LOC_OF_OCCUR_DESC), '-') AS LOC_OF_OCCUR_DESC,
+    NULLIF(TRIM(OFNS_DESC), '-') AS OFNS_DESC,
+    NULLIF(TRIM(PREM_TYP_DESC), '-') AS PREM_TYP_DESC,
+    NULLIF(TRIM(VIC_SEX), '-') AS VIC_SEX,
+    NULLIF(TRIM(VIC_AGE_GROUP), '-') AS VIC_AGE_GROUP,
+
+    -- Floats
+    CASE 
+        WHEN TRIM(Latitude) IN ('', '-', 'N/A') THEN NULL
+        ELSE CAST(TRIM(Latitude) AS DOUBLE PRECISION)
+    END AS Latitude,
+
+    CASE 
+        WHEN TRIM(Longitude) IN ('', '-', 'N/A') THEN NULL
+        ELSE CAST(TRIM(Longitude) AS DOUBLE PRECISION)
+    END AS Longitude,
+    
+    NULLIF(TRIM(neighbourhood), '-') AS neighbourhood
+
+FROM staging_nypd;
+

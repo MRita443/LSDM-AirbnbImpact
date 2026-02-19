@@ -1,0 +1,33 @@
+PREFIX : <http://example.org/nyc-vkg#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?neighborhoodName ?crimeCount ?listingCount
+WHERE {
+
+  ?neighborhood :name ?neighborhoodName .
+
+  {
+    SELECT ?neighborhood (COUNT(?crime) AS ?crimeCount)
+    WHERE {
+      ?crime a :CriminalComplaint ;
+         :victim_sex "F" ;
+         :premise_type ?ptype ;
+         :locatedIn ?neighborhood .
+
+      FILTER(CONTAINS(LCASE(?ptype), "residence"))
+    }
+    GROUP BY ?neighborhood
+  }
+
+  {
+    SELECT ?neighborhood (COUNT(?listing) AS ?listingCount)
+    WHERE {
+      ?listing a :AirbnbListing ;
+               :room_type "Private room" ;
+               :locatedIn ?neighborhood .
+    }
+    GROUP BY ?neighborhood
+  }
+
+}
+ORDER BY ASC(?crimeCount) DESC(?listingCount)

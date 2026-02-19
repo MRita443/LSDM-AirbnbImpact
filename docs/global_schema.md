@@ -50,13 +50,13 @@ Represents a confirmed transaction of a real estate asset recorded by the NYC De
 
 ### **AirbnbListing**
 
-**AirbnbListing**(`listing_id`, `name`, `listing_date`, `property_type`, `room_type`, `capacity`, `square_feet`, `daily_price`, `min_nights`, `max_nights`, `availability_year`, `first_review_date`, `last_review_date`, `location_score`, `geo_location`)
+**AirbnbListing**(`listing_id`, `listing_name`, `listing_date`, `property_type`, `room_type`, `capacity`, `square_feet`, `daily_price`, `min_nights`, `max_nights`, `availability_year`, `first_review_date`, `last_review_date`, `location_score`, `geo_location`)
 
 Represents a specific unit or room available for short-term rental on the platform.
 
 * **Attributes:**
 * `listing_id` (Integer): Unique identifier for the listing.
-* `name` (String): The descriptive title of the listing.
+* `listing_name` (String): The descriptive title of the listing.
 * `listing_date` (Date): The date the data was scraped/recorded.
 * `daily_price` (Decimal): The nightly rental cost in USD.
 * `property_type` (String): The structural type (e.g., "Apartment", "Loft", "House").

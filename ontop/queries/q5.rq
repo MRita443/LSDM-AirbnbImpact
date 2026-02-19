@@ -1,0 +1,22 @@
+PREFIX : <http://example.org/nyc-vkg#>
+
+SELECT ?neighborhoodName
+       (AVG(?score) AS ?avgScore)
+       (COUNT(DISTINCT ?crime) AS ?crimeCount)
+WHERE {
+
+  ?neighborhood :name ?neighborhoodName .
+
+  ?listing a :AirbnbListing ;
+           :location_score ?score ;
+           :locatedIn ?neighborhood .
+
+  OPTIONAL {
+    ?crime a :CriminalComplaint ;
+           :locatedIn ?neighborhood ;
+           :offense_level "FELONY" .
+  }
+}
+GROUP BY ?neighborhoodName
+HAVING(AVG(?score) > 9)
+ORDER BY DESC(?crimeCount) DESC(?avgScore)

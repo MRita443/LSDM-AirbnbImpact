@@ -1,0 +1,25 @@
+PREFIX : <http://example.org/nyc-vkg#>
+
+SELECT ?neighborhoodName
+       (COUNT(DISTINCT ?hotelSale) AS ?hotelCount)
+       (COUNT(DISTINCT ?entireHome) AS ?entireHomeCount)
+WHERE {
+
+  ?neighborhood :name ?neighborhoodName .
+
+  # Hotels
+  ?hotelSale a :PropertySale ;
+             :building_category ?cat ;
+             :locatedIn ?neighborhood .
+
+  FILTER(CONTAINS(LCASE(?cat), "hotel"))
+
+  # Entire homes
+  OPTIONAL {
+    ?entireHome a :AirbnbListing ;
+                :room_type "Entire home/apt" ;
+                :locatedIn ?neighborhood .
+  }
+}
+GROUP BY ?neighborhoodName
+ORDER BY DESC(?entireHomeCount) DESC(?hotelCount)

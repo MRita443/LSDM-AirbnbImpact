@@ -1,0 +1,43 @@
+PREFIX : <http://example.org/nyc-vkg#>
+
+SELECT ?neighborhoodName
+       ?avgSale
+       ?annualRevenue
+       (COALESCE(?burglaryCounter, 0) AS ?burglaryCount)
+WHERE {
+  ?neighborhood :name ?neighborhoodName .
+  {
+    SELECT ?neighborhood (AVG(?salePrice) AS ?avgSale)
+    WHERE {
+      ?sale a :PropertySale ;
+            :building_category ?cat ;
+            :sale_price ?salePrice ;
+            :locatedIn ?neighborhood .
+      FILTER(CONTAINS(LCASE(?cat), "condo"))
+    }
+    GROUP BY ?neighborhood
+  }
+  {
+    SELECT ?neighborhood
+           (AVG(?daily * IF(?avail < 200, ?avail, 200)) AS ?annualRevenue)
+    WHERE {
+      ?listing a :AirbnbListing ;
+               :daily_price ?daily ;
+               :availability_year ?avail ;
+               :locatedIn ?neighborhood .
+    }
+    GROUP BY ?neighborhood
+  }
+  OPTIONAL {
+    SELECT ?neighborhood
+           (COUNT(DISTINCT ?burglary) AS ?burglaryCounter)
+    WHERE {
+      ?burglary a :CriminalComplaint ;
+                 :locatedIn ?neighborhood ;
+                 :offense_type ?offense .
+      FILTER(?offense IN ("GRAND LARCENY", "PETIT LARCENY", "THEFT-FRAUD"))
+    }
+    GROUP BY ?neighborhood
+  }
+}
+ORDER BY DESC(?annualRevenue) DESC(?burglaryCount) DESC(?avgSale)

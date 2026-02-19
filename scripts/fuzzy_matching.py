@@ -89,7 +89,7 @@ def main():
         print("Error: Input files not found.")
         return
 
-    sales_df = pd.read_csv(sales_path, index_col=0)
+    sales_df = pd.read_csv(sales_path)
     ref_df = pd.read_csv(ref_path)
 
     # 1. Prepare Reference Dictionary
@@ -175,6 +175,7 @@ def main():
     output_df = sales_df.drop(columns=["borough_name_upper", "hood_upper"])
 
     out_path = os.path.join(OUTPUT_DIR, "nyc-rolling-sales-std-neighborhoods.csv")
+    output_df = output_df.rename(columns={"Unnamed: 0": ""})
     output_df.to_csv(out_path, index=False)
     print(f"✅ Success! Saved to {out_path}")
 
