@@ -1,42 +1,40 @@
 PREFIX : <http://example.org/nyc-vkg#>
 
-SELECT ?borough
-       (COALESCE(?suspiciousListingsCount, 0) AS ?suspiciousListings)
-       (COALESCE(?familyHouseSalesCount, 0) AS ?familyHouseSales)
+SELECT ?boroughName
+       (SUM(?suspiciousCount) AS ?totalSuspicious)
+       (SUM(?familySalesCount) AS ?totalFamilySales)
 WHERE {
+  ?borough a :Borough ;
+           :name ?boroughName .
+  ?neighborhood :partOf ?borough .
 
-  OPTIONAL {
-    SELECT ?borough (COUNT(DISTINCT ?listing) AS ?suspiciousListingsCount)
+  {
+    SELECT ?neighborhood (COUNT(DISTINCT ?listing) AS ?suspiciousCount)
     WHERE {
       ?listing a :AirbnbListing ;
-               :room_type "Entire home/apt" ;
-               :availability_year ?avail ;
-               :locatedIn ?neighborhood ;
-               :owns ?host .
-
+                 :room_type "Entire home/apt" ;
+                 :locatedIn ?neighborhood ;
+                 :availability_year ?avail ;
+                 :owns ?host .
       ?host :num_local_listings ?num_local_listings .
-      ?neighborhood :partOf ?borough .
-
       FILTER(?avail > 300 || ?num_local_listings > 2)
     }
-    GROUP BY ?borough
+    GROUP BY ?neighborhood
   }
 
-  OPTIONAL {
-    SELECT ?borough (COUNT(DISTINCT ?sale) AS ?familyHouseSalesCount)
+  UNION 
+  {
+    SELECT ?neighborhood (COUNT(DISTINCT ?sale) AS ?familySalesCount)
     WHERE {
       ?sale a :PropertySale ;
             :building_category ?cat ;
             :locatedIn ?neighborhood .
-
-      ?neighborhood :partOf ?borough .
-
-      FILTER(
-        ?cat = "01 ONE FAMILY DWELLINGS" ||
-        ?cat = "02 TWO FAMILY DWELLINGS"
-      )
+      # Using VALUES is often faster than FILTER with OR strings
+      VALUES ?cat { "01 ONE FAMILY DWELLINGS" "02 TWO FAMILY DWELLINGS" }
     }
-    GROUP BY ?borough
+    GROUP BY ?neighborhood
   }
 }
-ORDER BY DESC(?suspiciousListings) DESC(?familyHouseSales)
+GROUP BY ?boroughName
+ORDER BY DESC(?totalSuspicious) DESC(?totalFamilySales)
+
