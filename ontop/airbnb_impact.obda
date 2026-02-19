@@ -57,7 +57,7 @@ source		SELECT
 			latitude,
 			longitude,
 			LOWER(neighbourhood_cleansed) as neighbourhood_cleansed,
-			neighbourhood_group_cleansed,
+			LOWER(neighbourhood_group_cleansed) as neighbourhood_group_cleansed,
 			host_id
 			FROM clean_airbnb
 
@@ -102,7 +102,7 @@ source		SELECT
 			VIC_AGE_GROUP,
 			Latitude,
 			Longitude,
-			BORO_NM,
+			LOWER(BORO_NM) as BORO_NM,
 			LOWER(neighbourhood) as neighbourhood
 			FROM clean_nypd
 

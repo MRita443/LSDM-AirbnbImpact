@@ -1,27 +1,42 @@
 PREFIX : <http://example.org/nyc-vkg#>
 
-SELECT ?neighborhoodName (COUNT(DISTINCT ?listing) AS ?suspiciousListings) (COUNT(DISTINCT ?sale) AS ?familyHouseSales)
+SELECT ?borough
+       (COALESCE(?suspiciousListingsCount, 0) AS ?suspiciousListings)
+       (COALESCE(?familyHouseSalesCount, 0) AS ?familyHouseSales)
 WHERE {
 
-  ?neighborhood :name ?neighborhoodName .
+  OPTIONAL {
+    SELECT ?borough (COUNT(DISTINCT ?listing) AS ?suspiciousListingsCount)
+    WHERE {
+      ?listing a :AirbnbListing ;
+               :room_type "Entire home/apt" ;
+               :availability_year ?avail ;
+               :locatedIn ?neighborhood ;
+               :owns ?host .
 
-  # Residential buildings
-  ?sale a :PropertySale ;
-        :building_category ?cat ;
-        :locatedIn ?neighborhood .
+      ?host :num_local_listings ?num_local_listings .
+      ?neighborhood :partOf ?borough .
 
-  FILTER(?cat = "01 ONE FAMILY DWELLINGS" || ?cat = "02 TWO FAMILY DWELLINGS")
+      FILTER(?avail > 300 || ?num_local_listings > 2)
+    }
+    GROUP BY ?borough
+  }
 
-  # Suspicious Airbnb
-  ?listing a :AirbnbListing ;
-           :room_type "Entire home/apt" ;
-           :availability_year ?avail ;
-           :locatedIn ?neighborhood ;
-           :owns ?host .
+  OPTIONAL {
+    SELECT ?borough (COUNT(DISTINCT ?sale) AS ?familyHouseSalesCount)
+    WHERE {
+      ?sale a :PropertySale ;
+            :building_category ?cat ;
+            :locatedIn ?neighborhood .
 
-  ?host :num_local_listings ?num_local_listings .  
+      ?neighborhood :partOf ?borough .
 
-  FILTER(?avail > 300 || ?num_local_listings > 2)
+      FILTER(
+        ?cat = "01 ONE FAMILY DWELLINGS" ||
+        ?cat = "02 TWO FAMILY DWELLINGS"
+      )
+    }
+    GROUP BY ?borough
+  }
 }
-GROUP BY ?neighborhoodName
 ORDER BY DESC(?suspiciousListings) DESC(?familyHouseSales)
