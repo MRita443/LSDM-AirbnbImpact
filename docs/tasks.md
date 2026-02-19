@@ -36,7 +36,7 @@
 * **Hypothesis:** Certain neighborhoods have lower rates of female-targeted crimes occurring within residential premises, making them safer for renting private rooms.
   
  **Integration Logic:**
-* **Filter (NYPD):** Count crimes where the victim sex is "F" and the premise type contains the word "residence".
+* **Filter (NYPD):** Count crimes where the victim sex is "F", the premise type contains the word "residence", and the premise position is explicitly 'INSIDE'.
 
 
 * **Filter (Airbnb):** Count listings where the `room_type` is strictly "Private room".
@@ -48,9 +48,9 @@
 
 ### **4. The Commercial Overhaul Detector**
 
-**Concept:** Identify neighborhoods where residential housing is potentially being sold to become Airbnbs.
+**Concept:** Identify boroughs where residential housing is potentially being sold to become Airbnbs.
 
-* **Hypothesis:** Areas with high sales of one- and two-family dwellings alongside high volumes of highly-available "Entire Home" Airbnb listings may indicate selling of properties to become Airbnbs .
+* **Hypothesis:** Areas with high sales of one and two-family dwellings alongside high volumes of highly-available "Entire Home" Airbnb listings may indicate selling of properties to become Airbnbs .
   
 **Integration Logic:**
 * **Filter (Sales):** Select properties categorized strictly as "01 ONE FAMILY DWELLINGS" or "02 TWO FAMILY DWELLINGS".
@@ -59,7 +59,7 @@
 * **Filter (Airbnb):** Select "Entire home/apt" listings where the host owns more than 2 local listings OR the listing is available for more than 300 days a year.
 
 
-* **Result:** Group by neighborhood to count the distinct suspicious listings versus family house sales, ranking the highest counts first.
+* **Result:** Group by borough to count the distinct suspicious listings versus family house sales, ranking the highest counts first.
 
 
 
@@ -72,7 +72,7 @@
 * **Hypothesis:** Tourists may rate neighborhood locations very highly (above a 9) despite a high volume of local felonies.
   
  **Integration Logic:**
-* **Filter (Airbnb):** Aggregate location scores and keep only neighborhoods having an average score strictly greater than 9.
+* **Filter (Airbnb):** Filter for listings with more than 10 reviews, aggregate their location scores, and keep only neighborhoods having an average score strictly greater than 9.
 
 
 * **Filter (NYPD):** Count distinct criminal complaints where the offense level is classified as a "FELONY".
