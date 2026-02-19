@@ -101,7 +101,7 @@ Represents a specific police report filed with the NYPD regarding a felony, misd
 * **Attributes:**
 * `complaint_id` (Integer): Unique identifier for the complaint.
 * `timestamp` (DateTime): The exact date and time the crime occurred.
-* `crime_window_end` (DateTime): Derived date 15 days after the crime occurred.
+* `crime_window_end` (Date): Derived date 15 days after the crime occurred.
 * `offense_type` (String): The description of the crime (e.g., "BURGLARY", "FELONY ASSAULT").
 * `offense_level` (String): The legal severity (e.g., "FELONY", "MISDEMEANOR").
 * `offense_status` (String): The state of the crime (e.g., "COMPLETED", "ATTEMPTED").

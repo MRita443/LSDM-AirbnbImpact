@@ -627,7 +627,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_extra/nypd-complaints-neighborhoods.csv</filename>
+    <filename>/home/rita/Documents/lsdm25_26/LSDM-AirbnbImpact/data_processed/nypd-complaints-neighborhoods.csv</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>

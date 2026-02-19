@@ -441,11 +441,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Uppercase Strs</from>
-      <to>Unique Hosts</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Unique Hosts</from>
       <to>Hash Neighborhoods</to>
       <enabled>Y</enabled>
@@ -458,6 +453,21 @@
     <hop>
       <from>Null 0</from>
       <to>Table output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Uppercase Strs</from>
+      <to>Regex neighborhood</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Regex neighborhood</from>
+      <to>Generate is_outside_nyc</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Generate is_outside_nyc</from>
+      <to>Unique Hosts</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -563,8 +573,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>512</xloc>
-      <yloc>256</yloc>
+      <xloc>144</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -599,8 +609,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>346</yloc>
+      <xloc>720</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -630,8 +640,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>436</yloc>
+      <xloc>720</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -688,6 +698,10 @@
         <column_name>neighborhood_id</column_name>
         <stream_name>neighborhood_id</stream_name>
       </field>
+      <field>
+        <column_name>is_outside_nyc</column_name>
+        <stream_name>is_outside_nyc</stream_name>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -698,8 +712,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>526</yloc>
+      <xloc>720</xloc>
+      <yloc>496</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -731,8 +745,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>256</yloc>
+      <xloc>720</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -771,8 +785,81 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>256</yloc>
+      <xloc>272</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Regex neighborhood</name>
+    <type>RegexEval</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <script>(?i).*(NEW YORK|NY|QUEENS|BROOKLYN|BRONX|MANHATTAN|STATEN ISLAND).*</script>
+    <matcher>host_location</matcher>
+    <resultfieldname>is_nyc</resultfieldname>
+    <usevar>N</usevar>
+    <allowcapturegroups>N</allowcapturegroups>
+    <replacefields>Y</replacefields>
+    <canoneq>N</canoneq>
+    <caseinsensitive>N</caseinsensitive>
+    <comment>N</comment>
+    <dotall>N</dotall>
+    <multiline>N</multiline>
+    <unicode>N</unicode>
+    <unix>N</unix>
+    <fields>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Generate is_outside_nyc</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>is_outside_nyc</field_name>
+      <formula_string>AND(NOT(ISBLANK([host_location])); NOT([is_nyc]))</formula_string>
+      <value_type>Boolean</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

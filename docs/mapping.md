@@ -277,7 +277,7 @@ NYC\_Rolling\_Sales(
   yBuilt,
   price,
   sDate
-)
+) \land price > 10000
 \rightarrow
 PropertySale(sId, bCat, units, sqft, yBuilt, price, sDate)
 ```
@@ -288,6 +288,7 @@ PropertySale(sId, bCat, units, sqft, yBuilt, price, sDate)
   \{(sId, bCat, units, sqft, yBuilt, price, sDate) \mid
     \exists bName, nName .
     NYC\_Rolling\_Sales(sId, bName, nName, bCat, units, sqft, yBuilt, price, sDate)
+    \land price > 10000
   \},
   \;
   \{(sId, bCat, units, sqft, yBuilt, price, sDate) \mid

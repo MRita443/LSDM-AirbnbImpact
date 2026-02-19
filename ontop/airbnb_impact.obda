@@ -21,6 +21,7 @@ source		SELECT
 			LOWER(NEIGHBORHOOD) AS NEIGHBORHOOD,
 			LOWER(BOROUGH) as BOROUGH
 			FROM clean_sales
+			WHERE "SALE PRICE" > 10000
 
 mappingId	NeighborhoodFromSales
 target		:neighborhood/{NEIGHBORHOOD} a :Neighborhood ; :neighborhood_id {neighborhood_id}^^xsd:integer ; :name {NEIGHBORHOOD}^^xsd:string ; :partOf :borough/{BOROUGH} . 
