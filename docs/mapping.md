@@ -1,4 +1,3 @@
-
 ## Neighborhood
 _(Union of mappings from Sales and Airbnb Listings)_
 
@@ -302,12 +301,13 @@ PropertySale(sId, bCat, units, sqft, yBuilt, price, sDate)
 ## CriminalComplaint
 
 ```math
-\forall cId, cDate, offStat, offLvl, premPos, offType, premType, vSex, vAge, lat, lon . \\
+\forall cId, cDate, cTime, offStat, offLvl, premPos, offType, premType, vSex, vAge, lat, lon . \\
 \exists bName . \\
 NYPD\_Complaints(
   cId,
   bName,
   cDate,
+  cTime,
   offStat,
   offLvl,
   premPos,
@@ -321,7 +321,8 @@ NYPD\_Complaints(
 \rightarrow
 CriminalComplaint(
   cId,
-  cDate,
+  ToDateTime(cDate, cTime),
+  AddDays(ToDateTime(cDate, cTime), 15),
   offType,
   offLvl,
   offStat,
@@ -333,14 +334,17 @@ CriminalComplaint(
 )
 ```
 
+
+
 ```math
 \langle
-  \{(cId, cDate, offType, offLvl, offStat, premType, premPos, vSex, vAge, geo) \mid
-    \exists bName, lat, lon .
+  \{(cId, ts, cwe, offType, offLvl, offStat, premType, premPos, vSex, vAge, geo) \mid
+    \exists bName, cDate, cTime, lat, lon .
     NYPD\_Complaints(
       cId,
       bName,
       cDate,
+      cTime,
       offStat,
       offLvl,
       premPos,
@@ -351,13 +355,16 @@ CriminalComplaint(
       lat,
       lon
     )
+    \land ts = ToDateTime(cDate, cTime)
+    \land cwe = AddDays(ts, 15)
     \land geo = ToPoint(lat, lon)
   \},
   \;
-  \{(cId, cDate, offType, offLvl, offStat, premType, premPos, vSex, vAge, geo) \mid
+  \{(cId, ts, cwe, offType, offLvl, offStat, premType, premPos, vSex, vAge, geo) \mid
     CriminalComplaint(
       cId,
-      cDate,
+      ts,
+      cwe,
       offType,
       offLvl,
       offStat,
@@ -483,13 +490,14 @@ AirbnbListing(
 ## AirbnbHost
 
 ```math
-\forall hId, hSince, hLoc, isOut, hList . \\
-\exists lId, sDate, lName, hNeigh, nName, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore . \\
+\forall hId, hName, hSince, hLoc, hList . \\
+\exists lId, sDate, lName, hNeigh, nName, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, fRev, lRev, lScore, nRev . \\
 Airbnb\_Listings(
   lId,
   sDate,
   lName,
   hId,
+  hName,
   hSince,
   hLoc,
   hNeigh,
@@ -505,26 +513,26 @@ Airbnb\_Listings(
   minN,
   maxN,
   availYear,
-  nRev,
   fRev,
   lRev,
   lScore,
-  hList,
-  isOut
+  nRev,
+  hList
 )
 \rightarrow
-AirbnbHost(hId, hSince, hLoc, isOut, hList)
+AirbnbHost(hId, hName, hSince, hLoc, IsOutsideNYC(hLoc), hList)
 ```
 
 ```math
 \langle
-  \{(hId, hSince, hLoc, isOut, hList) \mid
-    \exists lId, sDate, lName, hNeigh, nName, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore .
+  \{(hId, hName, hSince, hLoc, isOut, hList) \mid
+    \exists lId, sDate, lName, hNeigh, nName, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, fRev, lRev, lScore, nRev .
     Airbnb\_Listings(
       lId,
       sDate,
       lName,
       hId,
+      hName,
       hSince,
       hLoc,
       hNeigh,
@@ -540,17 +548,17 @@ AirbnbHost(hId, hSince, hLoc, isOut, hList)
       minN,
       maxN,
       availYear,
-      nRev,
       fRev,
       lRev,
       lScore,
-      hList,
-      isOut
+      nRev,
+      hList
     )
+    \land isOut = IsOutsideNYC(hLoc)
   \},
   \;
-  \{(hId, hSince, hLoc, isOut, hList) \mid
-    AirbnbHost(hId, hSince, hLoc, isOut, hList)
+  \{(hId, hName, hSince, hLoc, isOut, hList) \mid
+    AirbnbHost(hId, hName, hSince, hLoc, isOut, hList)
   \}
 \rangle
 ```
@@ -634,6 +642,9 @@ owns(hId, lId)
 
 ## partOf (Neighborhood → Borough)
 
+### Mapping from Sales
+
+
 ```math
 \forall nName, bName . \\
 \exists sId, bCat, units, sqft, yBuilt, price, sDate . \\
@@ -666,6 +677,83 @@ partOf(Hash(nName), Hash(bName))
       yBuilt,
       price,
       sDate
+    )
+    \land nId = Hash(nName)
+    \land bId = Hash(bName)
+  \},
+  \;
+  \{(nId, bId) \mid
+    partOf(nId, bId)
+  \}
+\rangle
+```
+
+### Mapping from Airbnb
+
+```math
+\forall nName, bName . \\
+\exists lId, sDate, lName, hId, hSince, hLoc, hNeigh, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore, hList, isOut . \\
+Airbnb\_Listings(
+  lId,
+  sDate,
+  lName,
+  hId,
+  hSince,
+  hLoc,
+  hNeigh,
+  nName,
+  bName,
+  lat,
+  lon,
+  pType,
+  rType,
+  cap,
+  sqft,
+  dPrice,
+  minN,
+  maxN,
+  availYear,
+  nRev,
+  fRev,
+  lRev,
+  lScore,
+  hList,
+  isOut
+)
+\rightarrow
+partOf(Hash(nName), Hash(bName))
+```
+
+```math
+\langle
+  \{(nId, bId) \mid
+    \exists lId, sDate, lName, hId, hSince, hLoc, hNeigh, nName, bName, lat, lon, pType, rType, cap, sqft, dPrice, minN, maxN, availYear, nRev, fRev, lRev, lScore, hList, isOut .
+    Airbnb\_Listings(
+      lId,
+      sDate,
+      lName,
+      hId,
+      hSince,
+      hLoc,
+      hNeigh,
+      nName,
+      bName,
+      lat,
+      lon,
+      pType,
+      rType,
+      cap,
+      sqft,
+      dPrice,
+      minN,
+      maxN,
+      availYear,
+      nRev,
+      fRev,
+      lRev,
+      lScore,
+      hList,
+      isOut
     )
     \land nId = Hash(nName)
     \land bId = Hash(bName)
@@ -934,3 +1022,5 @@ locatedIn(cId, Hash(GetNeighName(lat, lon)))
   \}
 \rangle
 ```
+
+

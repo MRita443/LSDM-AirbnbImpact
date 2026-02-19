@@ -80,6 +80,7 @@ Represents the registered owner or manager of one or more listings.
 
 * **Attributes:**
 * `host_id` (Integer): Unique identifier for the host account.
+* `host_name` (String): The name of the host account.
 * `account_created` (Date): The date the host joined the platform.
 * `location` (String): The self-reported location text (e.g., "Paris, France").
 * `is_outside_nyc` (Boolean): Derived flag indicating if the host lives outside the NYC area.
@@ -93,13 +94,14 @@ Represents the registered owner or manager of one or more listings.
 
 ### **CriminalComplaint**
 
-**CriminalComplaint**(`complaint_id`, `timestamp`, `offense_type`, `offense_level`, `offense_status`, `premise_type`, `premise_pos`, `victim_sex`, `victim_age_group`, `geo_location`)
+**CriminalComplaint**(`complaint_id`, `timestamp`, `crime_window_end`, `offense_type`, `offense_level`, `offense_status`, `premise_type`, `premise_pos`, `victim_sex`, `victim_age_group`, `geo_location`)
 
 Represents a specific police report filed with the NYPD regarding a felony, misdemeanor, or violation.
 
 * **Attributes:**
 * `complaint_id` (Integer): Unique identifier for the complaint.
 * `timestamp` (DateTime): The exact date and time the crime occurred.
+* `crime_window_end` (DateTime): Derived date 15 days after the crime occurred.
 * `offense_type` (String): The description of the crime (e.g., "BURGLARY", "FELONY ASSAULT").
 * `offense_level` (String): The legal severity (e.g., "FELONY", "MISDEMEANOR").
 * `offense_status` (String): The state of the crime (e.g., "COMPLETED", "ATTEMPTED").
@@ -115,12 +117,12 @@ Represents a specific police report filed with the NYPD regarding a felony, misd
 
 # Relationships
 
-### **:locatedIn**
+### **locatedIn**
 
 *Connects entities to their logical geographic area.*
 
 * **Domain:** `PropertySale`, `AirbnbListing`, `CriminalComplaint`, `AirbnbHost`
-* **Range:** `Neighborhood`
+* **Range:** `Neighborhood` `Borough`
 * **Usage:**
 * `PropertySale`  `Neighborhood`
 * `AirbnbListing`  `Neighborhood`
@@ -129,7 +131,7 @@ Represents a specific police report filed with the NYPD regarding a felony, misd
 
 
 
-### **:owns**
+### **owns**
 
 *Connects a Host entity to the Listings they manage.*
 
@@ -140,7 +142,7 @@ Represents a specific police report filed with the NYPD regarding a felony, misd
 
 
 
-### **:partOf**
+### **partOf**
 
 *Connects a Neighborhood to the Borough it belongs to.*
 

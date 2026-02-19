@@ -1,131 +1,122 @@
-### **1. The "Gentrification & Speculation" Monitor (Merged)**
+### **1. The "Gentrification & Speculation" Monitor**
 
-**Concept:** Analyze the correlation between "Absentee Speculators" (hosts living outside NYC who joined recently) and property inflation.
+**Concept:** Analyze the correlation between absentee speculators and property inflation per neighborhood.
 
-* **Hypothesis:** Neighborhoods with a high density of non-resident, new hosts will show a steeper `SALE PRICE` per square foot compared to neighborhoods with veteran, local hosts.
-* **Datasets & Fields:**
-* **Airbnb:** `host_location` (Semantic check for "NY" or "New York"), `host_since` (Date), `host_id`.
-* **Sales:** `SALE PRICE`, `GROSS SQUARE FEET`, `NEIGHBORHOOD`.
+* **Hypothesis:** Neighborhoods with a high volume of non-resident hosts joining after September 2016 will show a steeper average sale price per square foot.
+  
+ **Integration Logic:**
+ *  **Filter (Airbnb):** Identify "Speculator Hosts" as those where `is_outside_nyc` is true and their account was created after September 1, 2016.
+ 
+* **Filter (Sales):** Only include property sales where the `gross_sqft` is greater than 0.
 
-
-* **Integration Logic:**
-1. **Filter (Airbnb):** Create a "Speculator" flag where `host_location`  "New York" AND `host_since` > '2020-01-01'.
-2. **Aggregate:** Calculate the percentage of listings owned by Speculators per `NEIGHBORHOOD`.
-3. **Filter (Sales):** Exclude commercial buildings; focus on Residential. Calculate `Avg Price / Gross SqFt` per neighborhood.
-4. **Join:** Correlate the "Speculator Percentage" with "Price per SqFt".
+* **Aggregate:** Group by neighborhood to calculate the `AVG(sale_price / gross_sqft)` alongside the count of distinct speculator hosts. Order the results in descending order for both metrics.
 
 
-* **Why it's good:** It combines semantic text analysis (`host_location`) with temporal profiling (`host_since`) to explain financial trends.
+### **2. The "Tourist Trap" Correlation**
 
-### **2. The "Tourist Trap" Spatio-Temporal Correlation**
+**Concept:** Determine if property crimes temporally overlap with recent tourist activity in a given area.
 
-**Concept:** Determine if crimes spike in exact locations and times where tourists are most active, testing the "victim availability" theory.
+* **Hypothesis:** High recent review activity temporally correlates with larceny incidents in the same neighborhood.
+  
+**Integration Logic:**
 
-* **Hypothesis:** High review activity (a proxy for tourist presence) temporally correlates with "Grand Larceny" (Pickpocketing), whereas Assaults might not.
-* **Datasets & Fields:**
-* **Airbnb:** `last_review` (Date), `latitude`, `longitude`.
-* **NYPD:** `CMPLNT_FR_DT` (Date), `OFNS_DESC` (Crime Type), `latitude`, `longitude`.
+* **Filter (NYPD):** Select crimes where the offense type is either "GRAND LARCENY" or "PETIT LARCENY".
 
 
-* **Integration Logic:**
-1. **Filter (Airbnb):** Identify "Active Tourist Spots" by selecting listings with `last_review` within the last 30 days of the analyzed period.
-2. **Filter (NYPD):** Select `OFNS_DESC` IN ('GRAND LARCENY', 'PETIT LARCENY').
-3. **Complex Join:** Perform a **Spatio-Temporal Join**:
-* *Spatial:* Distance(Airbnb, Crime) < 150 meters.
-* *Temporal:* Abs(Crime_Date - Last_Review_Date) < 7 days.
+* **Join:** Perform a temporal overlap join by ensuring the Airbnb review date falls between the crime's start date and the end of the crime window. Aggregate the counts of listings and crimes by neighborhood.
 
 
 
 
-* **Why it's good:** This fulfills the "Complex Mapping" requirement by using non-equality joins (Distance and Time windows) rather than just ID matching.
 
 ### **3. The "Demographic Safety" Filter (Solo Traveler Analysis)**
 
-**Concept:** A safety recommendation tool that tailors risk analysis based on the traveler's profile and accommodation type.
+**Concept:** A targeted safety query ranking neighborhoods for solo female travelers seeking private rooms.
 
-* **Hypothesis:** Violent crimes against women occur more frequently in specific premise types (e.g., Parks vs. Residences), and specific Airbnb room types expose travelers to these risks differently.
-* **Datasets & Fields:**
-* **NYPD:** `VIC_SEX` (Victim Gender), `PREM_TYP_DESC` (Location: "RESIDENCE", "STREET", "PARK").
-* **Airbnb:** `room_type` ("Private room" vs "Entire home"), `neighbourhood`.
-
-
-* **Integration Logic:**
-1. **User Query:** "Female solo traveler looking for a Private Room."
-2. **Filter (NYPD):** Select crimes where `VIC_SEX` = 'F' AND `PREM_TYP_DESC` matches 'RESIDENCE - APT. HOUSE' (Risk inside the apartment).
-3. **Filter (Airbnb):** Select listings where `room_type` = 'Private room'.
-4. **Result:** Rank neighborhoods by the *lowest* count of "In-Residence" crimes against females.
+* **Hypothesis:** Certain neighborhoods have lower rates of female-targeted crimes occurring within residential premises, making them safer for renting private rooms.
+  
+ **Integration Logic:**
+* **Filter (NYPD):** Count crimes where the victim sex is "F" and the premise type contains the word "residence".
 
 
-* **Why it's good:** It demonstrates deeply granular usage of the NYPD dataset (`PREM_TYP_DESC`) to solve a specific user problem.
-
-### **4. The "Illegal Hotel" Detector (Merged)**
-
-**Concept:** Identify residential buildings being misused as full-time professional hotels, violating zoning laws.
-
-* **Hypothesis:** "One Family Dwellings" with "Entire Home" listings available 300+ days a year are likely illegal operations.
-* **Datasets & Fields:**
-* **Sales:** `BUILDING CLASS CATEGORY` ("01 ONE FAMILY DWELLINGS"), `ADDRESS`.
-* **Airbnb:** `room_type` ("Entire home/apt"), `calculated_host_listings_count` (Professionality), `availability_365` (Occupancy).
+* **Filter (Airbnb):** Count listings where the `room_type` is strictly "Private room".
 
 
-* **Integration Logic:**
-1. **Filter (Sales):** Select strictly `One Family Dwellings` or `Two Family Dwellings`.
-2. **Filter (Airbnb):** Select listings where (`calculated_host_listings_count` > 2 OR `availability_365` > 300).
-3. **Join:** On `NEIGHBORHOOD` (or fuzzy match Address if you want to be advanced).
-4. **Result:** A "Watchlist" of neighborhoods where residential zoning is being eroded by commercial hospitality.
+* **Result:** Group by neighborhood and order the results to show the lowest crime counts first, followed by the highest availability of private rooms.
+
+
+
+### **4. The Commercial Overhaul Detector**
+
+**Concept:** Identify neighborhoods where residential housing is potentially being sold to become Airbnbs.
+
+* **Hypothesis:** Areas with high sales of one- and two-family dwellings alongside high volumes of highly-available "Entire Home" Airbnb listings may indicate selling of properties to become Airbnbs .
+  
+**Integration Logic:**
+* **Filter (Sales):** Select properties categorized strictly as "01 ONE FAMILY DWELLINGS" or "02 TWO FAMILY DWELLINGS".
+
+
+* **Filter (Airbnb):** Select "Entire home/apt" listings where the host owns more than 2 local listings OR the listing is available for more than 300 days a year.
+
+
+* **Result:** Group by neighborhood to count the distinct suspicious listings versus family house sales, ranking the highest counts first.
+
+
 
 
 
 ### **5. The "Perception Gap" Analysis**
 
-**Concept:** Quantify the disconnect between subjective guest experience and objective safety reality.
+**Concept:** Quantify the disconnect between highly-rated guest experiences and the objective reality of severe crime.
 
-* **Hypothesis:** Tourists often rate locations 5/5 stars even in neighborhoods with crime rates in the 90th percentile ("Deceptive Safety").
-* **Datasets & Fields:**
-* **Airbnb:** `review_scores_location` (1-5 scale), `number_of_reviews` (Confidence).
-* **NYPD:** `OFNS_DESC` (Filter for 'VIOLENT' categories), `CMPLNT_NUM` (Count).
-
-
-* **Integration Logic:**
-1. **Aggregate (Airbnb):** Calculate weighted average `review_scores_location` per neighborhood (ignore listings with < 10 reviews).
-2. **Aggregate (NYPD):** Calculate "Violent Crimes per Listing" density.
-3. **Compare:** Select neighborhoods where `Review Score` > 4.8 AND `Crime Density` is in the top 10%.
+* **Hypothesis:** Tourists may rate neighborhood locations very highly (above a 9) despite a high volume of local felonies.
+  
+ **Integration Logic:**
+* **Filter (Airbnb):** Aggregate location scores and keep only neighborhoods having an average score strictly greater than 9.
 
 
-* **Why it's good:** It contrasts "Sentiment Data" (Reviews) against "Administrative Data" (Police Reports).
+* **Filter (NYPD):** Count distinct criminal complaints where the offense level is classified as a "FELONY".
+
+
+* **Result:** Group by neighborhood, contrasting the count of felonies against the high average location score.
+
+
+
+
 
 ### **6. The "Condo Yield" Investment Map**
 
-**Concept:** A calculator to identify the most profitable *and* safe locations for real estate investors looking to convert condos into short-term rentals.
+**Concept:** A calculator to identify neighborhoods with high short-term rental revenue potential relative to condo prices, factoring in theft risks.
 
-* **Hypothesis:** Some neighborhoods offer low purchase prices but high rental demand, provided the burglary risk is managed.
-* **Datasets & Fields:**
-* **Sales:** `BUILDING CLASS CATEGORY` (Filter for "%CONDOS%"), `SALE PRICE`.
-* **Airbnb:** `price` (Nightly Rate), `availability_365` (Yield potential).
-* **NYPD:** `OFNS_DESC` (Filter for 'BURGLARY').
+* **Hypothesis:** Comparing condo sale prices to capped Airbnb revenue, while tracking local larceny/fraud, reveals optimal investment zones.
 
-
-* **Integration Logic:**
-1. **Sales Metric:** Avg `SALE PRICE` for Condos per neighborhood.
-2. **Airbnb Metric:** Annual Potential Revenue = `Avg Price` * `min(availability_365, 200)` (Conservative occupancy).
-3. **Risk Metric:** Count of `BURGLARY` per neighborhood.
-4. **Final Calculation:** `(Annual Revenue / Sale Price) * (1 / Normalized Burglary Score)`.
+ **Integration Logic:**
+* **Sales Metric:** Calculate the average `sale_price` for buildings where the category contains "condo".
 
 
-* **Why it's good:** It creates a derived metric ("Yield Ratio") that relies on data from all three sources existing simultaneously.
+* **Airbnb Metric:** Calculate annual revenue as `daily_price` multiplied by availability (capped at a maximum of 200 days for a conservative estimate).
+
+
+* **Risk Metric:** Count distinct crimes where the offense type is "GRAND LARCENY", "PETIT LARCENY", or "THEFT-FRAUD".
+
+
+* **Result:** Group by neighborhood and rank by highest annual revenue, then crime counts, then average sale price.
+
+
+
+
 
 ### **7. The "Hospitality War" (Land Use Analysis)**
 
-**Concept:** Analyze if Airbnbs are clustering near established Hotel districts (complementary) or invading residential sanctuaries (cannibalistic).
+**Concept:** Analyze the clustering and density of commercial hotels versus "Entire Home" Airbnbs within neighborhoods.
 
-* **Hypothesis:** "Entire Home" Airbnbs cluster near buildings sold as "HOTELS", whereas "Private Rooms" scatter further out.
-* **Datasets & Fields:**
-* **Sales:** `BUILDING CLASS CATEGORY` (Filter for "HOTELS"), `YEAR BUILT` (New vs Old hotels).
-* **Airbnb:** `room_type`, `latitude`, `longitude`.
+* **Hypothesis:** Counting hotel sales alongside whole-apartment rentals reveals which neighborhoods are strictly commercialized versus mixed-use.
+
+ **Integration Logic:**
+* **Set A (Hotels):** Count distinct property sales where the building category contains "hotel".
 
 
-* **Integration Logic:**
-1. **Set A (Hotels):** Geolocation of all sales where Building Class contains "HOTEL".
-2. **Set B (Airbnbs):** Geolocation of all "Entire Home" listings.
-3. **Spatial Analysis:** Calculate the average distance from every Airbnb to the nearest sold Hotel.
-4. **Grouping:** Group by `NEIGHBORHOOD` to see which areas are mixed-use vs. strictly segregated.
+* **Set B (Airbnbs):** Count distinct Airbnb listings where the room type is "Entire home/apt".
+
+
+* **Result:** Group the counts by neighborhood and order by the highest density of entire homes, followed by hotel sales.
