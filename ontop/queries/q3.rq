@@ -12,6 +12,7 @@ WHERE {
       ?crime a :CriminalComplaint ;
          :victim_sex "F" ;
          :premise_type ?ptype ;
+         :premise_pos "INSIDE" ;
          :locatedIn ?neighborhood .
 
       FILTER(CONTAINS(LCASE(?ptype), "residence"))
