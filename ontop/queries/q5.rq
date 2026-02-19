@@ -9,7 +9,10 @@ WHERE {
 
   ?listing a :AirbnbListing ;
            :location_score ?score ;
+           :number_of_reviews ?number_of_reviews ;
            :locatedIn ?neighborhood .
+
+  FILTER(?number_of_reviews > 10)
 
   OPTIONAL {
     ?crime a :CriminalComplaint ;
